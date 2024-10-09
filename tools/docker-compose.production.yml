@@ -1,0 +1,65 @@
+version: '3.9'
+services:
+  reverse-proxy:
+    image: traefik:2.6
+    command:
+      - "--providers.docker.swarmmode"
+      - "--providers.docker.exposedbydefault=false"
+      - "--api.dashboard=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.http.tls=true"
+      - "--entrypoints.websecure.http.tls.certresolver=leresolver"
+      - "--serverstransport.insecureskipverify"
+      - "--certificatesresolvers.leresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.leresolver.acme.email=enhush.toys@gmail.com"
+      - "--certificatesresolvers.leresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - letsencrypt:/letsencrypt
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        traefik.enable: true
+        traefik.http.routers.traefik.rule: Host(`traefik.${PROJECT_NAME}.mn`)
+        traefik.http.routers.traefik.service: api@internal
+        traefik.http.services.dummy-svc.loadbalancer.server.port: 8080
+
+  service-core:
+    image: ${SERVICE_CORE_IMAGE}
+    build:
+      context: ../backend/service-core
+      dockerfile: Dockerfile.production
+    environment:
+      - PORT=${SERVICE_CORE_PORT}
+      - MONGO_DB=${MONGO_DB}
+    env_file:
+      - ../backend/service-core/settings/.env.production
+    deploy:
+      labels:
+        traefik.enable: true
+        custom.project: ${PROJECT_NAME}
+        traefik.http.routers.service-core.rule: Host(`api.${PROJECT_NAME}.mn`)
+        traefik.http.services.service-core.loadbalancer.server.port: ${SERVICE_CORE_PORT}
+
+  web-admin:
+    image: ${WEB_ADMIN_IMAGE}
+    build:
+      context: ../frontend/web-admin
+      dockerfile: Dockerfile.production
+    deploy:
+      labels:
+        traefik.enable: true
+        custom.project: ${PROJECT_NAME}
+        traefik.http.routers.web-admin.rule: Host(`admin.${PROJECT_NAME}.mn`) || PathPrefix(`/health-check`)
+        traefik.http.services.web-admin.loadbalancer.server.port: 80
+
+volumes:
+  letsencrypt:

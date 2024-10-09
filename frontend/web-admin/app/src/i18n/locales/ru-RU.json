@@ -1,0 +1,28 @@
+{
+  "auth": {
+    "qparking": "QParking",
+    "desc": "QR powered parking system",
+    "login": "Логин",
+    "logout": "Выход",
+    "email": "E-mail",
+    "password": "Пароль",
+    "copyright": "`SIM LLC` {currentYear}. © Все права защищены."
+  },
+  "menu": {
+    "main": "главная",
+    "settings": "настройки",
+    "gateways": "парковки",
+    "users": "пользователи",
+    "roles": "роли"
+  },
+  "settings": {
+    "locales": {
+      "en-US": "English",
+      "ru-RU": "Русский",
+      "mn-MN": "Монгол"
+    },
+    "language": {
+      "picker": "Выберите язык"
+    }
+  }
+}

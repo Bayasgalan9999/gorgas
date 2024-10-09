@@ -1,0 +1,64 @@
+version: '3.9'
+services:
+  reverse-proxy:
+    image: traefik:2.6
+    command:
+      - "--providers.docker"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.constraints=Label(`custom.project`,`${PROJECT_NAME}`)"
+      - "--api.insecure=true"
+    ports:
+      - 80:80
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  service-core:
+    build: ../backend/service-core
+    ports:
+      - ${SERVICE_CORE_PORT}:${SERVICE_CORE_PORT}
+    volumes:
+      - ../backend/service-core/app/src:/app/src
+    environment:
+      - PORT=${SERVICE_CORE_PORT}
+      - MONGO_DB=${MONGO_DB}
+    env_file:
+      - ../backend/service-core/settings/.env.development
+    labels:
+      traefik.enable: true
+      custom.project: ${PROJECT_NAME}
+      traefik.http.routers.service-core.rule: Host(`api.localhost`) || PathPrefix(`/api/`)
+      traefik.http.services.service-core.loadbalancer.server.port: ${SERVICE_CORE_PORT}
+
+  web-admin:
+    build: ../frontend/web-admin
+    volumes:
+      - ../frontend/web-admin/app/src:/app/src
+    environment:
+      - PORT=${WEB_ADMIN_PORT}
+      - VITE_BASE_API_URL=${WEB_ADMIN_API_URL}
+    labels:
+      traefik.enable: true
+      custom.project: ${PROJECT_NAME}
+      traefik.http.routers.web-admin.rule: Host(`admin.localhost`) && !PathPrefix(`/api/`) || !PathPrefix(`/api/`)
+      traefik.http.services.web-admin.loadbalancer.server.port: ${WEB_ADMIN_PORT}
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    restart: always
+    command: mongod --quiet --logpath /dev/null
+
+  mongo-seed:
+    build:
+      context: ../backend/service-core/app/src/config/data
+      args:
+        MONGO_DB: ${MONGO_DB}
+    depends_on: [ mongo ]
+    stop_grace_period: 1ms
+
+  nats:
+    image: nats:latest
+    ports:
+      - 4222:4222

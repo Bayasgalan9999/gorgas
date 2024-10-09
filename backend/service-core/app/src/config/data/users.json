@@ -1,0 +1,19 @@
+[
+  {
+    "_id": {
+      "$oid": "5a11ce11828279756B696E79"
+    },
+    "name": "System Admin",
+    "email": "admin@gmail.com",
+    "password": "$2b$10$4gMKZVASb3Pigm9AGLGCle6lGcrVfJqkQBV1nS2GLHyBqkJclDqdK",
+    "roleId": {
+      "$oid": "148855e11828259756b696e7"
+    },
+    "createdAt": {
+      "$numberLong": "1676338905963"
+    },
+    "updatedAt": {
+      "$numberLong": "1676338905963"
+    }
+  }
+]

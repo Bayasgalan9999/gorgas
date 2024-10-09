@@ -1,0 +1,22 @@
+FROM node:alpine as builder
+
+WORKDIR /app
+COPY ./app/package*.json ./
+COPY ./app/tsconfig.json ./
+RUN npm ci
+COPY ./app ./
+RUN npm run build
+
+FROM node:alpine
+
+WORKDIR /app
+COPY ./settings/creds/mongo-ca-prod.crt ./mongo-ca.crt
+COPY ./settings/creds/nodemailer.creds ./nodemailer.creds
+COPY ./settings/creds/qpay.creds ./qpay.creds
+COPY ./settings/creds/secret-production-nats.creds ./nats.creds
+COPY ./app/package*.json ./
+RUN npm ci --omit=dev
+COPY --from=builder /app/dist ./dist
+COPY ./app/src/views /app/dist/src/views
+
+CMD node ./dist/src/index.js

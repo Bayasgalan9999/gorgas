@@ -1,0 +1,12 @@
+FROM node:alpine
+
+WORKDIR /app
+COPY ./settings/creds/mongo-ca-dev.crt ./mongo-ca.crt
+COPY ./settings/creds/nodemailer.creds ./nodemailer.creds
+COPY ./settings/creds/qpay.creds ./qpay.creds
+COPY ./settings/creds/secret-development-nats.creds ./nats.creds
+COPY ./app/package*.json ./
+RUN npm ci
+COPY ./app/ ./
+# CMD npm run test
+CMD npm run test ./tests/device-server/devices-server.test.ts

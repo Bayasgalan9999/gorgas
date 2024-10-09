@@ -1,0 +1,40 @@
+version: '3.9'
+services:
+  service-core:
+    build:
+      context: ../backend/service-core
+      dockerfile: Dockerfile.test
+    env_file:
+      - ../backend/service-core/settings/.env.test
+    environment:
+      - MONGO_DB=${MONGO_DB}
+    depends_on: [ mongo, nats ]
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    restart: always
+    command: mongod --quiet --logpath /dev/null
+
+  mongo-seed:
+    build:
+      context: ../backend/service-core/app/src/config/data
+      args:
+        MONGO_DB: ${MONGO_DB}
+    depends_on: [ mongo ]
+    stop_grace_period: 1ms
+
+  nats:
+    image: nats:latest
+    ports:
+      - 4222:4222
+
+  web-admin:
+    build: ../frontend/web-admin
+    environment:
+      - PORT=${WEB_ADMIN_PORT}
+      - VITE_BASE_API_URL=${WEB_ADMIN_API_URL}
+    labels:
+      custom.project: ${PROJECT_NAME}
+    depends_on: [ mongo, service-core ]

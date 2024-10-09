@@ -1,0 +1,5 @@
+{
+  "PURCHASE": "purchases",
+  "SYSTEM_USER": "users",
+  "SYSTEM_ROLE": "roles"
+}

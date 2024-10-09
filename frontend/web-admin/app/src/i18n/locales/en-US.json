@@ -1,0 +1,96 @@
+{
+  "auth": {
+    "qparking": "QParking",
+    "desc": "QR powered parking system",
+    "login": "Login",
+    "logout": "Logout",
+    "email": "E-mail",
+    "password": "Password",
+    "copyright": "`SIM LLC` {currentYear}. © All rights reserved."
+  },
+  "menu": {
+    "main": "Main",
+    "settings": "Settings",
+    "gateways": "Gateways",
+    "parkings": "Parkings",
+    "devices": "Devices",
+    "users": "Users",
+    "roles": "Roles",
+    "purchases": "Purchases",
+    "map": "Map"
+  },
+  "table": {
+    "createdAt": "Creation date",
+    "nodata": "No data found",
+    "loading": "Loading",
+    "pagination": {
+      "total_rows": "{firstRowIndex}-{endRowIndex} of {totalRowsNumber}",
+      "rows_per_page": "Rows per page:"
+    },
+    "actions": {
+      "edit": "Edit",
+      "details": "Details",
+      "more_actions": "More actions"
+    }
+  },
+  "form": {
+    "optional": "Optional"
+  },
+  "filter": {
+    "range": {
+      "between": "{min} < Price < {max}",
+      "gt": "> {max}",
+      "lt": "< {min}"
+    }
+  },
+  "users": {
+    "users": "Users",
+    "id": "id",
+    "name": "User name",
+    "role": "Role",
+    "email": "E-mail"
+  },
+  "roles": {
+    "roles": "Roles",
+    "name": "Role name",
+    "resources": "Resources",
+    "not_found": "Role not found."
+  },
+  "devices": {
+    "name": "Device",
+    "price": "Price(MNT / hr)",
+    "status": "Status",
+    "parking": "Parking",
+    "gateway": "Gateway",
+    "slotNumber": "Slot №",
+    "localNumber": "Local №"
+  },
+  "gateways": {
+    "name": "Gateway",
+    "parking": "Parking",
+    "topic": "NATS Topic",
+    "devices": "Devices",
+    "not_found":"Gateway not found."
+  },
+  "parkings": {
+    "name": "Parking",
+    "gateways": "Gateways",
+    "devices": "Devices"
+  },
+  "purchases": {
+    "status": "Status",
+    "method": "Payment method",
+    "price": "Total amount",
+    "device": "Device name"
+  },
+  "settings": {
+    "locales": {
+      "en-US": "English",
+      "ru-RU": "Русский",
+      "mn-MN": "Монгол"
+    },
+    "language": {
+      "picker": "Choose language"
+    }
+  }
+}
